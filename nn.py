@@ -49,9 +49,41 @@ print(params[0].size())
 
 # 随机生成32*32的输入
 input = torch.randn(1, 1, 32, 32)
-out = net(input)
-print(out)
+# out = net(input)
+# print(out)
 
 # 所有参数梯度缓存置零，用随机梯度进行反向传播
+# net.zero_grad()
+# out.backward(torch.randn(1, 10))
+
+# 计算与随机目标的均方误差（损失函数）
+output = net(input)
+target = torch.rand(10)
+target = target.view(1, -1)
+criterion = nn.MSELoss()
+loss = criterion(output, target)
+print(loss)
+# 计算路径：input-conv2d-relu-maxpool2d-conv2d-relu-maxpool2d-view-linear-relu-linear-relu-linear-MSELoss-loss
+print(loss.grad_fn) # MSELoss
+print(loss.grad_fn.next_functions[0][0]) # Linear
+print(loss.grad_fn.next_functions[0][0].next_functions[0][0]) # ReLU
+
+# 所有参数梯度缓存置零，反向传播损失到各参数的梯度，对比conv1前后变化
 net.zero_grad()
-out.backward(torch.randn(1, 10))
+print('before: ', net.conv1.bias.grad)
+loss.backward()
+print('after: ', net.conv1.bias.grad)
+
+# 更新参数（随机梯度下降）
+learning_rate = 0.01
+for f in net.parameters():
+    f.data.sub_(f.grad.data * learning_rate)
+
+# 其他更新方法（SGD,Nesterov-SGD,Adam,RMSProp）
+import torch.optim as optim
+optimizer = optim.SGD(net.parameters(), lr = 0.01)
+optimizer.zero_grad()
+output = net(input)
+loss = criterion(output, target)
+loss.backward()
+optimizer.step()
