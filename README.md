@@ -1,6 +1,6 @@
 # PyTorch
 
-## 1.开始
+## 1.开始 tensor.py
 
 ### 环境
 
@@ -23,11 +23,11 @@ PyTorch是一个基于Torch的Python开源机器学习库，用于自然语言�
 
 * 自定义扩展
 
-## 2.自动微分
+## 2.自动微分 autograd.py
 
 autograd 包是 PyTorch 中所有神经网络的核心。该包为 Tensors 上的所有操作提供自动微分。它是一个由运行定义的框架，这意味着以代码运行方式定义你的后向传播，并且每次迭代都可以不同。
 
-## 3.神经网络
+## 3.神经网络 nn.py
 
 ### 神经网络的训练步骤
 
@@ -52,3 +52,19 @@ autograd 包是 PyTorch 中所有神经网络的核心。该包为 Tensors 上�
 
 * autograd.Function - Implements forward and backward definitions of an autograd operation. Every Tensor operation, creates at least a single Function node, that connects to functions that created a Tensor and encodes its history.
 实现自动微分操作的定义，每个张量操作至少生成一个节点
+
+## 4.图像分类器
+
+CIFAR10：包含10个类别的数据集，图像尺寸为33232，即RGB的3层颜色通道，每个通道内尺寸为32*32
+
+训练步骤：
+
+1. 使用torchvision加载并归一化（训练&测试）数据集。
+
+2. 定义卷积神经网络
+
+3. 定义损失函数
+
+4. 在训练集上训练网络
+
+5. 在测试集上测试网络
