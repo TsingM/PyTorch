@@ -60,7 +60,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
 # 训练网络
-for epoch in range(2): # 2次遍历数据集
+for epoch in range(3): # n次遍历数据集
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
         # 获取输入数据
@@ -79,3 +79,42 @@ for epoch in range(2): # 2次遍历数据集
             print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
 print('Finished Training')
+
+# 单张图像测试（输出是与10个类的近似程度，程度越高网络就越认为图像属于这一类）
+outputs = net(images)
+_, predicted = torch.max(outputs, 1)
+print('Prediceted:', ' '.join('%5s' % classes[predicted[j]] for j in range(4)))
+
+# 整个数据集测试-整体输出
+correct = 0
+total = 0
+with torch.no_grad():
+    for data in testloader:
+        images, labels = data
+        outputs = net(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
+
+# 整个数据集测试-分类输出
+class_correct = list(0. for i in range(10))
+class_total = list(0. for i in range(10))
+with torch.no_grad():
+    for data in testloader:
+        images, labels = data
+        outputs = net(images)
+        _, predicted = torch.max(outputs.data, 1)
+        c = (predicted == labels).squeeze()
+        for i in range(4):
+            label = labels[i]
+            class_correct[label] += c[i].item()
+            class_total[label] += 1
+for i in range(10):
+    print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    
+# GPU
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
+net.to(device)
+inputs, labels = inputs.to(device), labels.to(device)
