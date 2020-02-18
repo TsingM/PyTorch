@@ -4,7 +4,7 @@ NumPy是用于科学计算的通用框架，它对计算图、深度学习和梯
 '''
 # -*- coding: utf-8 -*-
 import numpy as np
-# N是批量大小，D_in是输入维度，49/5000 H是隐藏的维度，D_out是输出维度
+# N是批量大小，D_in是输入维度，H是隐藏的维度，D_out是输出维度
 N, D_in, H, D_out = 64, 1000, 100, 10
 # 创建随机输入和输出数据
 x = np.random.randn(N, D_in)
